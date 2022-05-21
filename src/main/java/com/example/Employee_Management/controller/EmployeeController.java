@@ -17,22 +17,12 @@ import com.example.Employee_Management.repository.Employeerepository;
 public class EmployeeController {
 	private Employeerepository employeerepository;
 
-    public EmployeeController(Employeerepository employeeRepository) {
+    public EmployeeController(Employeerepository employeerepository) {
         this.employeerepository = employeerepository;
     }
-
-    /**
-     * @return It returns list of employees based on salary in descending order, If two employees salaries are same it fetches data in ascending order based on their names.
-     */
-    @GetMapping("/employees")
-    Iterable<Employee> getAllEmployees() {
-        return employeerepository.findAll(Sort.by(Sort.Order.desc("salary"), Sort.Order.asc("name")));
-    }
-
-    /**
-     * @param newEmployee New Employee to be added into database.
-     * @return Newly added employee otherwise throws EmployeeExistedException.
-     */
+    
+//new employee to be added if employee already existed otherwise throws exception
+    
     @PostMapping("/employees")
     Employee newEmployee(@RequestBody Employee newEmployee) {
         if (employeerepository.existsById(newEmployee.getId()))
@@ -40,36 +30,35 @@ public class EmployeeController {
         else return employeerepository.save(newEmployee);
     }
 
-    /**
-     * @param id Id of the Employee to fetch.
-     * @return it id exists return employee otherwise it throws EmployeeNotFoundException.
-     */
+    //get all employees based on their salary in descending order
+    // if salary is same get based on their name in ascending order
+    
+    @GetMapping("/employees")
+    Iterable<Employee> getAllEmployees() {
+        return employeerepository.findAll(Sort.by(Sort.Order.desc("salary"), Sort.Order.asc("name")));
+    }
+
+//get the employee by id
+    
     @GetMapping("/employees/{id}")
     Employee getEmployee(@PathVariable Long id) {
         return employeerepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
-    /**
-     * @param id id of the employee to delete employee data in database.
-     */
-    @DeleteMapping("/employees/{id}")
-    void deleteEmployee(@PathVariable Long id) {
-        employeerepository.deleteById(id);
-    }
-
-    /**
-     * Updates employee salary as path variable.
-     *
-     * @param id Id of the employee.
-     * @param salary New salary for this employee.
-     * @return returns ok response with updated salary otherwise returns EmployeeNotFoundException
-     */
-    @PutMapping("/employees/upSalary/{id}/{salary}")
+//Update an employee salary as path variable
+//* @return returns ok response with updated salary otherwise returns ResourceNotFoundException
+     
+    @PutMapping("/employees/{id}/{salary}")
     ResponseEntity<Employee> updateSalary(@PathVariable long id, @PathVariable int salary) {
         Employee employee = getEmployee(id);
         employee.setSalary(salary);
         employeerepository.save(employee);
         return ResponseEntity.ok(employee);
+    }
+    //delete the employee
+    @DeleteMapping("/employees/{id}")
+    void deleteEmployee(@PathVariable Long id) {
+        employeerepository.deleteById(id);
     }
 }
