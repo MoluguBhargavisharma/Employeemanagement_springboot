@@ -3,9 +3,9 @@ pipeline {
     stages {
         stage('git repo & clean') {
             steps {
-                bat "rmdir /s /q Employeemanagement_springboot"
+                //bat "rmdir /s /q Employeemanagement_springboot"
                 
-                bat "git clone https://github.com/MoluguBhargavisharma/Employeemanagement_springboot.git"
+                //bat "git clone https://github.com/MoluguBhargavisharma/Employeemanagement_springboot.git"
 
                 bat "mvn clean -f Employeemanagement_springboot"
             } 
